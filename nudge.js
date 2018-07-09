@@ -164,7 +164,7 @@ const NUDGE = {
 //==============================================
 
 NUDGE.Box = class {
-  constructor(height, width) {
+  constructor(width, height) {
     //shorthand for { height: height, width: width }
     this._dim = { height, width };
     this._dest = { x: 0, y: 0, gravitate: false, speed: 10 };
