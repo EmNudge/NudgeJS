@@ -226,7 +226,12 @@ NUDGE.Box = class {
         return dx**2 + dy**2 < shape.radius**2;
       }
     } else if (name === 'box') {
-      return Math.abs(this._pos.x - shape._pos.x) < this._dim.width + shape._dim.width && Math.abs(this._pos.y - shape._pos.y) < this._dim.height + shape._dim.height;
+      //lower bounds can be this._dim.width or this._pos.x, it gets the same result
+      //the latter is just more confusing and changes based on movement. No change in preformance
+      return (
+        NUDGE.isBtwn(this._pos.x, shape.x - this._dim.width, shape.x + shape.width) &&
+        NUDGE.isBtwn(this._pos.y, shape.y - this._dim.height, shape.y + shape.height) 
+      );
     } else if (name === 'bounds') {
       return !NUDGE.isBtwn(this._pos.x, shape[0], shape[2] - this._dim.width) || !NUDGE.isBtwn(this._pos.y, shape[1], shape[3] - this._dim.height);
     }
