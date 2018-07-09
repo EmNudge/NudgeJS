@@ -210,11 +210,7 @@ NUDGE.Box = class {
   }
 
   changeColor(color) {
-    if (color === null) {
-      this._col = NUDGE.randColor();
-    } else {
-      this._col = color;
-    }
+    this._col = color || NUDGE.randColor();
 
     return this;
   }
