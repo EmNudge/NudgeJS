@@ -126,7 +126,7 @@ const NUDGE = {
     a: Math.floor(Math.random() * 255)
   }),
 
-  polariy: num => {
+  polarity: num => {
     //return -1 if negative, 1 if positive, and 0 if 0
     return num <= 0 ? num === 0 ? 0 : -1 : 1;
   },
