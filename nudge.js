@@ -208,6 +208,16 @@ NUDGE.Box = class {
     
     return this;
   }
+
+  changeColor(color) {
+    if (color === null) {
+      this._col = NUDGE.randColor();
+    } else {
+      this._col = color;
+    }
+
+    return this;
+  }
   
   isColliding(name, shape) {
     if (name === 'point') {
