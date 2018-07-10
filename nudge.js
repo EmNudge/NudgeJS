@@ -169,8 +169,17 @@ NUDGE.Shape = class {
     this._vel = new NUDGE.Vector();
     this._acc = new NUDGE.Vector();
 
+    this._functions = [];
     this._dest = { x: 0, y: 0, gravitate: false, speed: 10 };
     this._col = { r: 0, g: 0, b: 0, a: 1};
+  }
+
+  draw(context, unpaused=true) {
+    if (unpaused) this.update();
+    for (func of this._functions) {
+      //don't run if func is pausable and shape is paused
+      if (!func.pausable || unpaused) func.func(context);
+    }
   }
 
   update() {
@@ -185,9 +194,13 @@ NUDGE.Shape = class {
     }
   }
 
+  addFunc(func, pausable = false) {
+    this._functions.push({ func, pausable });
+    return this;
+  }
+
   gravitateTo(x, y, speed = 10) {
     this._dest = { x, y, gravitate: true, speed: 50/speed};
-    
     return this;
   }
   
@@ -195,13 +208,11 @@ NUDGE.Shape = class {
     this._pos.addTo({ x: posX, y: posY });
     this._vel.addTo({ x: velX, y: velY });
     this._acc.addTo({ x: accX, y: accY });
-    
     return this;
   }
 
   changeColor(color) {
     this._col = color || NUDGE.randColor();
-
     return this;
   }
     
