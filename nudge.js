@@ -13,10 +13,10 @@ const NUDGE = {
 		Math.min(Math.max(value, Math.min(min, max)), Math.max(min, max))
   ),
 
-  map: (val, min, max, min2, max2) => {
+  map: (val, min, max, min2, max2) => (
     //map val which is contained in range 1 into value as if it were in range 2
-    return (val - min) / (max - min) * (max2 - min2) + min2;
-  },
+    (val - min) / (max - min) * (max2 - min2) + min2
+  ),
 
   //arguments length is not present in arrow syntax
   random: function(min = 1, max, places = 2) {
@@ -43,11 +43,11 @@ const NUDGE = {
     return false;
   },
 
-  polarityDiv: (val, denom) => {
+  polarityDiv: (val, denom) => (
     //disregard the polarity of the divider and keep the polarity of the divided
     //i.e. 8/-5===1.6 && -8/-5===-1.6 && 8/5===1.6
-    return (val < 0 && denom < 0) || (val >= 0 && denom > 0) ? val/denom : val/-denom;
-  },
+    (val < 0 && denom < 0) || (val >= 0 && denom > 0) ? val/denom : val/-denom
+  ),
 
   angledVelocity: (startX, startY, targetX, targetY) => {
     //non-tan2 version of getting velocities based off "angled" targets
@@ -126,15 +126,15 @@ const NUDGE = {
     a: Math.floor(Math.random() * 255)
   }),
 
-  polarity: num => {
+  polarity: num => (
     //return -1 if negative, 1 if positive, and 0 if 0
-    return num <= 0 ? num === 0 ? 0 : -1 : 1;
-  },
+    num <= 0 ? num === 0 ? 0 : -1 : 1
+  ),
 
-  closer: (num, val1, val2) => {
+  closer: (num, val1, val2) => (
     //return whichever value num is closer to. returns val1 if exactly in between
-    return Math.abs(num - val1) <= Math.abs(num - val2) ? val1 : val2;
-  },
+    Math.abs(num - val1) <= Math.abs(num - val2) ? val1 : val2
+  ),
 
   rotateImage: (context, image, angleInRad, positionX, positionY, axisX, axisY) => {
     //just shorter code for rotating an image
@@ -160,11 +160,73 @@ const NUDGE = {
 }
 
 //==============================================
+//---------START SHAPE CLASS--------------------
+//==============================================
+
+NUDGE.Shape = class {
+  constructor() {
+    this._pos = new NUDGE.Vector();
+    this._vel = new NUDGE.Vector();
+    this._acc = new NUDGE.Vector();
+
+    this._dest = { x: 0, y: 0, gravitate: false, speed: 10 };
+    this._col = { r: 0, g: 0, b: 0, a: 1};
+  }
+
+  update() {
+    this._pos.addTo(this._vel);
+    this._vel.addTo(this._acc);
+
+    //gravitateTo code
+    if (this._dest.gravitate) {
+      this._vel.x = (this._dest.x - this._pos.x - this._dim.width/2)/this._dest.speed;
+      this._vel.y = (this._dest.y - this._pos.y - this._dim.height/2)/this._dest.speed;
+      if (this._pos.x === this._dest.x) this._dest.gravitate = false;
+    }
+  }
+
+  gravitateTo(x, y, speed = 10) {
+    this._dest = { x, y, gravitate: true, speed: 50/speed};
+    
+    return this;
+  }
+  
+  addVectors(posX, posY, velX=0, velY=0, accX=0, accY=0) {
+    this._pos.addTo({ x: posX, y: posY });
+    this._vel.addTo({ x: velX, y: velY });
+    this._acc.addTo({ x: accX, y: accY });
+    
+    return this;
+  }
+
+  changeColor(color) {
+    this._col = color || NUDGE.randColor();
+
+    return this;
+  }
+    
+  get x() { return this._pos.x; };
+  get y() { return this._pos.y; };
+  set x(num) { this._pos.x = num; };
+  set y(num) { this._pos.y = num; };
+  
+  get velX() { return this._vel.x; };
+  get velY() { return this._vel.y; };
+  set velX(num) { this._vel.x = num; };
+  set velY(num) { this._vel.y = num; };
+  
+  get accX() { return this._acc.x; };
+  get accY() { return this._acc.y; };
+  set accX(num) { this._acc.x = num; };
+  set accY(num) { this._acc.y = num; };
+}
+
+//==============================================
 //---------START BOX CLASS----------------------
 //==============================================
 
 NUDGE.Box = class {
-  constructor(width, height) {
+  constructor(width = 50, height = 50) {
     //shorthand for { height: height, width: width }
     this._dim = { height, width };
     this._dest = { x: 0, y: 0, gravitate: false, speed: 10 };
@@ -173,9 +235,7 @@ NUDGE.Box = class {
     this._vel = new NUDGE.Vector();
     this._acc = new NUDGE.Vector();
     
-    this._col = { r: 0, g: 0, b: 0, a: 1}
-    
-    return this;
+    this._col = { r: 0, g: 0, b: 0, a: 1};
   }
   
   draw(context, unpaused=true) {
@@ -221,8 +281,8 @@ NUDGE.Box = class {
     } else if (name === 'circle') {
       //circle collision is expensive, so check if box collision works first
       if (this.isColliding('box', shape)) {
-        const dx = shape.x - Math.min(this.x, Math.min(shape.x, this._pos.x + this._dim.width));
-        const dy = shape._pos.y - Math.min(this._pos.y, Math.min(shape._pos.y, this._pos.y + this._dim.height));
+        const dx = shape.x - Math.min(this._pos.x, Math.min(shape.x, this._pos.x + this._dim.width));
+        const dy = shape.y - Math.min(this._pos.y, Math.min(shape.y, this._pos.y + this._dim.height));
         return dx**2 + dy**2 < shape.radius**2;
       }
     } else if (name === 'box') {
@@ -261,7 +321,49 @@ NUDGE.Box = class {
 }
 
 //==============================================
-//---------START BOX CLASS----------------------
+//---------START CIRCLE CLASS-------------------
+//==============================================
+NUDGE.Circle = class {
+  constructor(radius) {
+    super();
+    this._radius = radius;
+  }
+
+  draw(context, unpaused=true) {
+    if (unpaused) this.update();
+    const { r, g, b, a } = this._col;
+    context.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`
+    context.beginPath();
+    context.arc(this._pos.x, this._pos.y, this.radius, 0, 2*Math.PI);
+    context.fill();
+  }
+
+  isColliding(name, shape) {
+    if (name === 'point') {
+      const dx = this._pos.x - shape.x;
+      const dy = this._pos.y - shape.y;
+      return this._radius**2 > dx**2 + dy**2;
+      
+      //this was the fastest version of the formula I could find
+    } else if (name === 'circle') {
+      return (this._pos.x - shape.x)**2 + (this._pos.y - shape.y)**2 < (shape.radius + this._radius)**2;
+    } else if (name === 'box') {
+        const dx = this._pos.x - Math.min(shape.x, Math.min(this._pos.x, shape.x + shape.width));
+        const dy = this._pos.y - Math.min(shape.y, Math.min(this._pos.y, shape.y + shape.height));
+        return dx**2 + dy**2 < this._radius**2;
+    } else if (name === 'bounds') {
+      return !NUDGE.isBtwn(this._pos.x, shape[0], shape[2] - this._radius) || !NUDGE.isBtwn(this._pos.y, shape[1], shape[3] - this._radius);
+    }
+    //TODO: add polygon class and collision checker
+    return false;
+  }
+    
+  get radius() { return this._radius; }
+  set radius(num) { this._radius = num; }
+}
+
+//==============================================
+//---------START VECTOR CLASS-------------------
 //==============================================
 
 NUDGE.Vector = class {
