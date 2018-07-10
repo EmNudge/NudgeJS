@@ -176,7 +176,7 @@ NUDGE.Shape = class {
 
   draw(context, unpaused=true) {
     if (unpaused) this.update();
-    for (func of this._functions) {
+    for (const func of this._functions) {
       //don't run if func is pausable and shape is paused
       if (!func.pausable || unpaused) func.func(context);
     }
