@@ -225,17 +225,12 @@ NUDGE.Shape = class {
 //---------START BOX CLASS----------------------
 //==============================================
 
-NUDGE.Box = class {
+NUDGE.Box = class extends NUDGE.Shape {
   constructor(width = 50, height = 50) {
+    super();
+
     //shorthand for { height: height, width: width }
     this._dim = { height, width };
-    this._dest = { x: 0, y: 0, gravitate: false, speed: 10 };
-    this._pos = new NUDGE.Vector();
-    
-    this._vel = new NUDGE.Vector();
-    this._acc = new NUDGE.Vector();
-    
-    this._col = { r: 0, g: 0, b: 0, a: 1};
   }
   
   draw(context, unpaused=true) {
@@ -243,36 +238,6 @@ NUDGE.Box = class {
     const { r, g, b, a } = this._col;
     context.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`
     context.fillRect(this._pos.x, this._pos.y, this._dim.width, this._dim.height)
-  }
-  
-  update() {
-    this._pos.addTo(this._vel);
-    this._vel.addTo(this._acc);
-    if (this._dest.gravitate) {
-      this._vel.x = (this._dest.x - this._pos.x - this._dim.width/2)/this._dest.speed;
-      this._vel.y = (this._dest.y - this._pos.y - this._dim.height/2)/this._dest.speed;
-      if (this._pos.x === this._dest.x) this._dest.gravitate = false;
-    }
-  }
-  
-  gravitateTo(x, y, speed = 10) {
-    this._dest = { x, y, gravitate: true, speed: 50/speed};
-    
-    return this;
-  }
-  
-  addVectors(posX, posY, velX=0, velY=0, accX=0, accY=0) {
-    this._pos.addTo({ x: posX, y: posY });
-    this._vel.addTo({ x: velX, y: velY });
-    this._acc.addTo({ x: accX, y: accY });
-    
-    return this;
-  }
-
-  changeColor(color) {
-    this._col = color || NUDGE.randColor();
-
-    return this;
   }
   
   isColliding(name, shape) {
@@ -303,21 +268,6 @@ NUDGE.Box = class {
   get height() { return this._dim.height; };
   set width(num) { this._dim.width = num; };
   set height(num) { this._dim.height = num; };
-  
-  get x() { return this._pos.x; };
-  get y() { return this._pos.y; };
-  set x(num) { this._pos.x = num; };
-  set y(num) { this._pos.y = num; };
-  
-  get velX() { return this._vel.x; };
-  get velY() { return this._vel.y; };
-  set velX(num) { this._vel.x = num; };
-  set velY(num) { this._vel.y = num; };
-  
-  get accX() { return this._acc.x; };
-  get accY() { return this._acc.y; };
-  set accX(num) { this._acc.x = num; };
-  set accY(num) { this._acc.y = num; };
 }
 
 //==============================================
