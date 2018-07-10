@@ -179,6 +179,7 @@ NUDGE.Shape = class {
     for (func of this._functions) {
       //don't run if func is pausable and shape is paused
       if (!func.pausable || unpaused) func.func(context);
+      console.log(func)
     }
   }
 
