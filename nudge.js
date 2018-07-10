@@ -323,7 +323,7 @@ NUDGE.Box = class {
 //==============================================
 //---------START CIRCLE CLASS-------------------
 //==============================================
-NUDGE.Circle = class extends Shape {
+NUDGE.Circle = class extends NUDGE.Shape {
   constructor(radius) {
     super();
     this._radius = radius;
