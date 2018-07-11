@@ -193,7 +193,7 @@ NUDGE.Shape = class {
     if (this._dest.gravitate) {
       if (this._dest.x !== null) this._vel.x = (this._dest.x - this._pos.x - this._dim.width/2)/this._dest.speed;
       if (this._dest.y !== null) this._vel.y = (this._dest.y - this._pos.y - this._dim.height/2)/this._dest.speed;
-      if (this._pos.x === this._dest.x) this._dest.gravitate = false;
+      if (Math.abs(this._pos.x - this._dest.x) < 2) this._dest.gravitate = false;
     }
   }
 
