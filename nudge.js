@@ -179,8 +179,8 @@ NUDGE.Shape = class {
     for (const func of this._functions) {
       //don't run if func is pausable and shape is paused
       if (!func.pausable || unpaused) {
-        const myFunc = func.func.bind(this);
-        myFunc(context);
+        func.func = func.func.bind(this);
+        func.func(context);
       }
     }
   }
@@ -202,8 +202,13 @@ NUDGE.Shape = class {
     return this;
   }
 
-  gravitateTo(x, y, speed = 10) {
-    this._dest = { x, y, gravitate: true, speed: 50/speed};
+  gravitateTo(x, y = null, speed = 10) {
+    this._dest = {
+      x: x===null ? this._pos.x : x,
+      y: x===null ? this._pos.y : y,
+      gravitate: true,
+      speed: 50/speed
+    };
     return this;
   }
   
@@ -214,7 +219,7 @@ NUDGE.Shape = class {
     return this;
   }
 
-  changeColor(color) {
+  setColor(color) {
     this._col = color || NUDGE.randColor();
     return this;
   }
