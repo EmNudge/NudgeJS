@@ -191,8 +191,8 @@ NUDGE.Shape = class {
 
     //gravitateTo code
     if (this._dest.gravitate) {
-      this._vel.x = (this._dest.x - this._pos.x - this._dim.width/2)/this._dest.speed;
-      this._vel.y = (this._dest.y - this._pos.y - this._dim.height/2)/this._dest.speed;
+      if (this._dest.x !== null) this._vel.x = (this._dest.x - this._pos.x - this._dim.width/2)/this._dest.speed;
+      if (this._dest.y !== null) this._vel.y = (this._dest.y - this._pos.y - this._dim.height/2)/this._dest.speed;
       if (this._pos.x === this._dest.x) this._dest.gravitate = false;
     }
   }
@@ -203,12 +203,7 @@ NUDGE.Shape = class {
   }
 
   gravitateTo(x, y = null, speed = 10) {
-    this._dest = {
-      x: x===null ? this._pos.x : x,
-      y: x===null ? this._pos.y : y,
-      gravitate: true,
-      speed: 50/speed
-    };
+    this._dest = {x, y, gravitate: true, speed: 50/speed};
     return this;
   }
   
