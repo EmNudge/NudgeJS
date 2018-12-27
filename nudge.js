@@ -2,24 +2,24 @@
 NudgeJS is a utility library for JS canvas and general mathematical functions.
 Created by EmNudge
 */
-const NUDGE = {
-  isBtwn: (val, min, max, equals = true) => (
+class NUDGE {
+  static isBtwn(val, min, max, equals = true) {
     //returns whether value is between 2 others
-    equals ? val >= min && val <= max : val > min && val < max
-  ),
+    return equals ? val >= min && val <= max : val > min && val < max;
+  }
 
-  clamp: (value, min, max) => (
+  static clamp(value, min, max) {
     //returns value or bounds value if out-of-bounds
-		Math.min(Math.max(value, Math.min(min, max)), Math.max(min, max))
-  ),
+		return Math.min(Math.max(value, Math.min(min, max)), Math.max(min, max));
+  }
 
-  map: (val, min, max, min2, max2) => (
+  static map(val, min, max, min2, max2) {
     //map val which is contained in range 1 into value as if it were in range 2
-    (val - min) / (max - min) * (max2 - min2) + min2
-  ),
+    return (val - min) / (max - min) * (max2 - min2) + min2;
+  }
 
   //arguments length is not present in arrow syntax
-  random: function(min = 1, max, places = 2) {
+  static random(min = 1, max, places = 2) {
     //if given an array as paramter 1, it will return a random value from the array
     if (typeof min === "object") {
       return min[Math.floor(Math.random() * min.length)];
@@ -32,24 +32,24 @@ const NUDGE = {
       default: //if no paramters, returns regular Math.random(). If there are, uses min
         return Math.random() * min;
     }
-  },
+  }
 
-  multiEqual: (val, ...args) => {
+  static multiEqual(val, ...args) {
     //check for basic equality with unlimited arguments
     for (const arg of args) {
       if (val === arg) return true;
     }
     
     return false;
-  },
+  }
 
-  polarityDiv: (val, denom) => (
+  static polarityDiv(val, denom) {
     //disregard the polarity of the divider and keep the polarity of the divided
     //i.e. 8/-5===1.6 && -8/-5===-1.6 && 8/5===1.6
-    (val < 0 && denom < 0) || (val >= 0 && denom > 0) ? val/denom : val/-denom
-  ),
+    return (val < 0 && denom < 0) || (val >= 0 && denom > 0) ? val/denom : val/-denom;
+  }
 
-  angledVelocity: (startX, startY, targetX, targetY) => {
+  static angledVelocity(startX, startY, targetX, targetY) {
     //non-tan2 version of getting velocities based off "angled" targets
     const deltaX = targetX - startX,
         deltaY = targetY - startY;
@@ -61,9 +61,9 @@ const NUDGE = {
     } 
 
     return { x: NUDGE.polarityDiv(deltaX, deltaY), y: NUDGE.polarityDiv(deltaY, deltaY) };
-  },
+  }
 
-  addObj: (obj1, obj2) => {
+  static addObj(obj1, obj2) {
     //basically Object.assign(), but doesn't append non-shared properties to object 1
     let addedObj = {};
 
@@ -77,9 +77,9 @@ const NUDGE = {
     }
 
     return addedObj;
-  },
+  }
 
-  randPerimeter: (w, h, x = 0, y = 0) => {
+  static randPerimeter(w, h, x = 0, y = 0) {
     //returns a random point on the edge of a rectangle
     //user is given the option to provide the starting x,y position which default to nothing
     const point = Math.random() * (w*2 + h*2),
@@ -98,9 +98,9 @@ const NUDGE = {
     }
 
     return pos;
-  },
+  }
 
-  weightedRand: choices => {
+  static weightedRand(choices) {
     //example array that this function expects: 
     //[{ val: 49034, chance: 3 }, { val: 'burger', chance: 45 }]
     let total = 0;
@@ -117,35 +117,37 @@ const NUDGE = {
       if (NUDGE.isBtwn(winner, total - choice.chance, total)) return choice.val;
       total -= choice.chance;
     }
-  },
+  }
 
-  randColor: () => ({
-    r: Math.floor(Math.random() * 255),
-    g: Math.floor(Math.random() * 255),
-    b: Math.floor(Math.random() * 255),
-    a: Math.floor(Math.random() * 255)
-  }),
+  static randColor() {
+    return {
+      r: Math.floor(Math.random() * 255),
+      g: Math.floor(Math.random() * 255),
+      b: Math.floor(Math.random() * 255),
+      a: Math.floor(Math.random() * 255)
+    }
+  }
 
-  polarity: num => (
+  static polarity(num) {
     //return -1 if negative, 1 if positive, and 0 if 0
-    num <= 0 ? num === 0 ? 0 : -1 : 1
-  ),
+    return num <= 0 ? num === 0 ? 0 : -1 : 1;
+  }
 
-  closer: (num, val1, val2) => (
+  static closer(num, val1, val2) {
     //return whichever value num is closer to. returns val1 if exactly in between
-    Math.abs(num - val1) <= Math.abs(num - val2) ? val1 : val2
-  ),
+    return Math.abs(num - val1) <= Math.abs(num - val2) ? val1 : val2;
+  }
 
-  rotateImage: (context, image, angleInRad, positionX, positionY, axisX, axisY) => {
+  static rotateImage(context, image, angleInRad, positionX, positionY, axisX, axisY) {
     //just shorter code for rotating an image
     context.translate(positionX, positionY);
     context.rotate(angleInRad);
     context.drawImage(image, -axisX, -axisY);
     context.rotate(-angleInRad);
     context.translate(-positionX, -positionY);
-  },
+  }
 
-  background: function(context, r, g, b, a = 1) {
+  static background(context, r, g, b, a = 1) {
     //just a shorter function for defining a colored background
     context.beginPath();
     context.rect(0, 0, canvas.width, canvas.height);
@@ -156,7 +158,7 @@ const NUDGE = {
       context.fillStyle = `rgba(${r}, ${r}, ${r}, ${opac})`;
     }
     context.fill();
-  },
+  }
 }
 
 //==============================================
