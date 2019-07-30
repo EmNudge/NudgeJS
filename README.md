@@ -1,2 +1,10 @@
 # NudgeJS
-Personal utility library specifically for JS canvas, but can be used for general JS
+Personal utility library with functions I end up using fairly often when doing canvas projects.
+
+Includes:
+- isBtwn
+- clamp
+- map
+- random
+- multiEqual
+- closer
